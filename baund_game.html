@@ -2,6 +2,7 @@
 <body>
   <script>
 
+// Canvas要素の初期設定
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d');
 
@@ -12,6 +13,8 @@
 
     document.body.appendChild(canvas);
     
+
+    // ブロック崩しのプログラム
     const ball = {
       x: null,
       y: null,
@@ -25,9 +28,10 @@
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.fill();
 
+// ボールが壁にあたった時に跳ね返すための条件分岐
         if(this.x < 0 || this.x > canvas.width) this.dx *= -1;
-        if(this.y < 0 || this.y > canvas.height) this.dy *= -1;
-
+        // 落ちたらゲームオーバーにする
+        if(this.y > canvas.height);
 
         this.x += this.dx;
         this.y += this.dy;
@@ -52,6 +56,7 @@
     const block = {
       width: null,
       height: 20,
+      // 全ブロックの位置情報を格納する
       data: [],
 
       update: function(){
@@ -62,6 +67,10 @@
         })
       }
     }
+
+    // ブロックの配置を配列で指定できるようにする
+    // 0：非表示
+    // 1：表示
     const level = [
       [0,0,0,0,0,0],
       [0,0,0,0,0,0],
@@ -76,13 +85,13 @@
       paddle.y = canvas.height - paddle.height;
 
       ball.x = canvas.width / 2;
-      ball.y = canvas.height / 2 + 50;
+      ball.y = canvas.height / 2 + 150;
       ball.dx = ball.speed;
       ball.dy = ball.speed;
 
       block.width = canvas.width / level[0].length;
 
-
+// 全ブロックの位置情報を設定する
       for(let i=0; i<level.length; i++){
         for(let j=0; j<level[i].length; j++){
           if(level[i][j]){
@@ -97,12 +106,15 @@
 
       }
     }
+    // 当たり判定
     const collide = (obj1,obj2) =>{
       return obj1.x < obj2.x + obj2.width &&
              obj2.x < obj1.x + obj1.width &&
              obj1.y < obj2.y + obj2.height &&
              obj2.y < obj1.y + obj1.height;
     }
+
+    // メイン処理
     const loop =() => {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -110,11 +122,12 @@
     paddle.update();
     ball.update();
     block.update();
-
+    // ボールとパドルの当たり判定
     if(collide(ball,paddle)){
        ball.dy *= -1;
+       ball.y = paddle.y - ball.height;
     }
-
+    // ボールとブロックの当たり判定
     block.data.forEach((brick, index) => {
       if (collide(ball, brick)){
         ball.dy *=-1;
